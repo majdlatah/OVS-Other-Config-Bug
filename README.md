@@ -46,4 +46,4 @@ Aborted
 
 This bug is related to udpif_set_threads() function in ofproto/ofproto-dpif-upcall.c
 
-This bug can be fixed by enforcing upper bounds for the number of corresponding threads inside the udpif_set_threads() function.
+This bug can be fixed by enforcing an upper bound for the number of corresponding threads inside the udpif_set_threads() function.
