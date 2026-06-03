@@ -4,7 +4,7 @@ A simple misconfiguration that can cause the Open vSwitch (OVS) daemon to abort,
 
 ### Case 1: Configuration first (i.e., no bridge is added before):
 
-Initially, we create the new configuration with an arbitrarily large integer:
+Initially, we create the new configuration with an arbitrarily large integer (e.g., 1000 threads):
 ```
 ovs-vsctl set Open_vSwitch . other_config:n-revalidator-threads=1000
 ```
