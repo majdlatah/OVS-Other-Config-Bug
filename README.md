@@ -10,7 +10,7 @@ Initially, we create the new configuration:
 ovs-vsctl set Open_vSwitch . other_config:n-revalidator-threads=1000
 ```
 
-Then we create a new bridge:
+Next, we create a new bridge:
 ```
 ovs-vsctl add-br br-attack-test &
 ```
