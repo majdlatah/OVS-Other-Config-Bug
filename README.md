@@ -1,9 +1,9 @@
 # OVS-Switch-Config-Bug (CVE-2026-36499)
 
 A simple misconfiguration that can cause the OVS daemon to abort, which leads to a denial of service. This bug was found by analyzing the source code of the switch using an AI coding agent (Claude). Then, we tested the problem and prepared this proof-of-concept. This issue occurs when a privileged user writes an arbitrarily large integer to n-revalidator-threads in the Open_vSwitch other_config map. We tested this configuration bug on Open vSwitch v3.6.90.
-We have two cases: 
+We have two cases (new and old bridges): 
 
-1) No bridge is added before (requires adding a new bridge):
+1) No bridge is added before, which requires adding a new bridge:
 
 Initially, we create the new configuration:
 ```
@@ -49,10 +49,10 @@ Aborted
 ```
 
 
-2) If a bridge already exists, then no need to add a new bridge:
+2) If a bridge already exists, then we can directly run the new config:
 
-Before the new configuration, a switch (b1) is already running:
-ovs-vsctl --may-exist add-br b1 
+Before the new configuration, a switch (b1) is already added:
+ovs-vsctl add-br b1 
 
 Then a privileged user adds a new config:
 ```
