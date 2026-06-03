@@ -1,4 +1,4 @@
-# OVS-Switch-Config-Bug
+# OVS-Switch-Config-Bug (CVE-2026-36499)
 We explain how a simple wrong config can crash the switch
 
 This bug appears when a user writes an arbitrarily large integer value to n-revalidator-threads in the Open_vSwitch other_config map via OVSDB transaction, then creates a bridge to trigger datapath initialization.
@@ -40,4 +40,3 @@ ovs-vswitchd(+0x1e6285) [0x620d8ad88285]
 ovs-vswitchd(revalidator508): lib/seq.c:98: pthread_mutex_lock failed: Resource deadlock avoided
 Aborted
 ```
-
