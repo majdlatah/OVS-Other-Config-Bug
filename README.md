@@ -50,7 +50,7 @@ Aborted
 
 ### Case 2: Configuration later (i.e, a bridge already exists):
 
-Before the new configuration, a switch (b1) is already added:
+Before the new configuration, a bridge (b1) is already added:
 
 ```
 ovs-vsctl add-br b1 
