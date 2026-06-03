@@ -90,6 +90,6 @@ ovs-vswitchd(revalidator525): lib/seq.c:98: pthread_mutex_lock failed: Resource 
 ```
 Therefore, it works in both cases, resulting in a crashed OVS daemon.
 
-This is related to udpif_set_threads() function in ofproto/ofproto-dpif-upcall.c
+This configuration bug is related to udpif_set_threads() function in ofproto/ofproto-dpif-upcall.c
 
 It can be simply fixed by enforcing an upper bound for the number of corresponding threads inside the udpif_set_threads() function.
