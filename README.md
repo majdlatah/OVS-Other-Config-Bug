@@ -3,7 +3,7 @@
 A simple misconfiguration that can cause the OVS daemon to abort, which leads to a denial of service. This bug was found by analyzing the source code of the switch using an AI coding agent (Claude). Then, we tested the problem and prepared this proof-of-concept. This issue occurs when a privileged user writes an arbitrarily large integer to n-revalidator-threads in the Open_vSwitch other_config map. We tested this configuration bug on Open vSwitch v3.6.90.
 We have two cases (new and old bridges): 
 
-### Case 1: No bridge is added before, which requires adding a new bridge:
+### Case 1: Configuration first (i.e., no bridge is added before):
 
 Initially, we create the new configuration:
 ```
@@ -49,7 +49,7 @@ Aborted
 ```
 
 
-### Case 2: A bridge already exists, then we can directly run the new config:
+### Case 2: Configuration later (i.e, a bridge already exists):
 
 Before the new configuration, a switch (b1) is already added:
 ovs-vsctl add-br b1 
