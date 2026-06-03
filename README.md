@@ -56,7 +56,7 @@ Before the new configuration, a switch (b1) is already added:
 ovs-vsctl add-br b1 
 ```
 
-Then a privileged user adds a new config:
+Then, a privileged user adds a new config:
 ```
 ovs-vsctl set Open_vSwitch . other_config:n-revalidator-threads=1000
 ```
