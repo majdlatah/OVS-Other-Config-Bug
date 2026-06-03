@@ -11,7 +11,7 @@ ovs-vsctl set Open_vSwitch . other_config:n-revalidator-threads=1000
 
 Next, we create a new bridge:
 ```
-ovs-vsctl add-br br-attack-test &
+ovs-vsctl add-br br1 &
 ```
 
 Then, we observe that the OVS daemon crashes:
