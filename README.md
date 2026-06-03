@@ -1,6 +1,6 @@
 # OVS-Switch-Config-Bug (CVE-2026-36499)
 
-We explain how a simple misconfiguration can cause a denial-of-service attack by causing the OVS daemon to abort.
+We explain how a simple misconfiguration can cause a denial-of-service attack by causing the OVS daemon to abort. This bug was found by running an AI coding agent (Claude AI) directly on switch code. Then, we further tested the problem and provided a PoC.
 
 This bug occurs when a privileged user writes an arbitrarily large integer to n-revalidator-threads in the Open_vSwitch other_config map, and then creates a bridge to trigger datapath initialization.
 
