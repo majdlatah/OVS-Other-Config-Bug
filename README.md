@@ -1,7 +1,8 @@
 # OVS-Switch-Config-Bug (CVE-2026-36499)
-We explain how a simple wrong config can crash the switch
 
-This bug appears when a user writes an arbitrarily large integer value to n-revalidator-threads in the Open_vSwitch other_config map via OVSDB transaction, then creates a bridge to trigger datapath initialization.
+We explain how a simple wrong config can cause a denial of service since it leads to the OVS daemon being aborted.
+
+This bug appears when a privileged user writes an arbitrarily large integer value to n-revalidator-threads in the Open_vSwitch other_config map, then creates a bridge to trigger datapath initialization.
 
 ```
 ovs-vsctl set Open_vSwitch . other_config:n-revalidator-threads=1000
